@@ -6,17 +6,17 @@ from collections import OrderedDict
 from pprint import pformat
 
 
-def run(algorithm, x_test, y_test, algorithm_name='Algorithm'):
+def run(mnist,algorithm, x_test, y_test, algorithm_name='Algorithm'):
     print('Running {}...'.format(algorithm_name))
     start = timeit.default_timer()
     np.random.seed(0)
-    predicted_y_test = algorithm.run(x_test)
+    predicted_y_test = algorithm.run(x_test,mnist,y_test)
     np.random.seed()
     stop = timeit.default_timer()
     run_time = stop - start
-    
-    #correct_predict = (y_test == predicted_y_test).astype(np.int32).sum()
-    correct_predict = (y_test == y_test).astype(np.int32).sum()
+
+    correct_predict = (y_test == predicted_y_test).astype(np.int32).sum()
+    #correct_predict = (y_test == y_test).astype(np.int32).sum()
     
     incorrect_predict = len(y_test) - correct_predict
     accuracy = float(correct_predict) / len(y_test)
@@ -40,7 +40,7 @@ if __name__ == '__main__':
         x_valid, y_valid = mnist.validation._images, mnist.validation.labels
         if algorithm.__name__ == 'knn':
             x_valid, y_valid = x_valid[:1000], y_valid[:1000]
-        correct_predict, accuracy, run_time = run(algorithm, x_valid, y_valid, algorithm_name=algorithm.__name__)
+        correct_predict, accuracy, run_time = run(mnist,algorithm, x_valid, y_valid, algorithm_name=algorithm.__name__)
         result.append(OrderedDict(
             algorithm_name=algorithm.__name__,
             correct_predict=correct_predict,
