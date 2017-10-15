@@ -40,7 +40,7 @@ def run(x_test,mnist,y_test):
     y_labels9 = mnist9.train.labels.astype(np.int32)
     y_labels10 = mnist10.train.labels.astype(np.int32)
     
-    print(y_labels1)
+    
     y_labels1[y_labels1 !=1] = -1
     y_labels2[y_labels2 !=1] = -1
     y_labels3[y_labels3 !=1] = -1
@@ -51,24 +51,12 @@ def run(x_test,mnist,y_test):
     y_labels8[y_labels8 !=1] = -1
     y_labels9[y_labels9 !=1] = -1
     y_labels10[y_labels10 !=1] = -1
-    print(y_labels1)
-    
-    #mnist1.train.labels[mnist1.train.labels != 1] = -1
-    #mnist2.train.labels[mnist1.train.labels != 2] = -1
-    #mnist3.train.labels[mnist1.train.labels != 3] = -1
-    #mnist4.train.labels[mnist1.train.labels != 4] = -1
-    #mnist5.train.labels[mnist1.train.labels != 5] = -1
-    #mnist6.train.labels[mnist1.train.labels != 6] = -1
-    #mnist7.train.labels[mnist1.train.labels != 7] = -1
-    #mnist8.train.labels[mnist1.train.labels != 8] = -1
-    #mnist9.train.labels[mnist1.train.labels != 9] = -1
-    #mnist10.train.labels[mnist1.train.labels != 0] = -1
     
     
     x1 = tf.placeholder(tf.float32,[None, n_inputs])      
     W1 = tf.Variable(tf.zeros([n_inputs,1]))                
     b1 = tf.Variable(tf.zeros([1]))                         
-    y1 = tf.placeholder(tf.float32,[None,])    
+    y1 = tf.placeholder(tf.float32,[None, ])    
     
     x2 = tf.placeholder(tf.float32,[None, n_inputs])      
     W2 = tf.Variable(tf.zeros([n_inputs,1]))                
@@ -133,7 +121,7 @@ def run(x_test,mnist,y_test):
     score9 = tf.matmul(x9,W9) + b9
     score10 = tf.matmul(x10,W10) + b10
     
-    lr = 0.001
+    lr = 0.01
     
     #hinge loss function
     regularization_loss1 = 0.5 * tf.reduce_sum(tf.square(W1))
@@ -147,7 +135,7 @@ def run(x_test,mnist,y_test):
     regularization_loss9 = 0.5 * tf.reduce_sum(tf.square(W9))
     regularization_loss10 = 0.5 * tf.reduce_sum(tf.square(W10))
     
-    hinge_loss1 = tf.reduce_sum(tf.maximum(0.0, 1.0 - y1*score1))
+    hinge_loss1 = tf.reduce_sum(tf.maximum(tf.zeros(200,1), 1.0 - y1*score1))
     hinge_loss2 = tf.reduce_sum(tf.maximum(0.0, 1.0 - y2*score2))
     hinge_loss3 = tf.reduce_sum(tf.maximum(0.0, 1.0 - y3*score3))
     hinge_loss4 = tf.reduce_sum(tf.maximum(0.0, 1.0 - y4*score4))
@@ -191,42 +179,52 @@ def run(x_test,mnist,y_test):
     n_epochs = 100
     batch_size = 200
     
-    predicted = tf.sign(score1)
-    correct_predicted = tf.equal(y1,predicted)
-    accuracy = tf.reduce_mean(tf.cast(correct_predicted, tf.float32))
+    predicted1 = tf.sign(score1[0])
+    correct_predicted1 = tf.equal(y1,predicted1)
+    print(predicted1[0].shape)
+    print(y1.shape)
+    accuracy1 = tf.reduce_mean(tf.cast(correct_predicted1, tf.float32)) 
+
     
     with tf.Session() as sess:
-        sess.run(init) 
+        init.run()
+        #sess.run(init) 
         print("In Session")
         
         for i in range(1000):
             batch_x1, batch_y1 = mnist1.train.next_batch(batch_size)
-            batch_x2, batch_y2 = mnist2.train.next_batch(batch_size)
-            batch_x3, batch_y3 = mnist3.train.next_batch(batch_size)
-            batch_x4, batch_y4 = mnist4.train.next_batch(batch_size)
-            batch_x5, batch_y5 = mnist5.train.next_batch(batch_size)
-            batch_x6, batch_y6 = mnist6.train.next_batch(batch_size)
-            batch_x7, batch_y7 = mnist7.train.next_batch(batch_size)
-            batch_x8, batch_y8 = mnist8.train.next_batch(batch_size)
-            batch_x9, batch_y9 = mnist9.train.next_batch(batch_size)
-            batch_x10, batch_y10 = mnist10.train.next_batch(batch_size)
+            temp = batch_y1.astype(np.int32)
+            temp[temp !=1] = -1
             
+            #batch_x2, batch_y2 = mnist2.train.next_batch(batch_size)
+            #batch_x3, batch_y3 = mnist3.train.next_batch(batch_size)
+            #batch_x4, batch_y4 = mnist4.train.next_batch(batch_size)
+            #batch_x5, batch_y5 = mnist5.train.next_batch(batch_size)
+            #batch_x6, batch_y6 = mnist6.train.next_batch(batch_size)
+            #batch_x7, batch_y7 = mnist7.train.next_batch(batch_size)
+            #batch_x8, batch_y8 = mnist8.train.next_batch(batch_size)
+            #batch_x9, batch_y9 = mnist9.train.next_batch(batch_size)
+            #batch_x10, batch_y10 = mnist10.train.next_batch(batch_size)
+            
+            if (i%500 == 0):
+                print (batch_x1)
+                print(temp)
             #batch_y = batch_y.reshape(batch_size,1)
             
-            sess.run(training1, feed_dict={x1:batch_x1, y1:batch_y1})
-            sess.run(training2, feed_dict={x2:batch_x2, y2:batch_y2})
-            sess.run(training3, feed_dict={x3:batch_x3, y3:batch_y3})
-            sess.run(training4, feed_dict={x4:batch_x4, y4:batch_y4})
-            sess.run(training5, feed_dict={x5:batch_x5, y5:batch_y5})
-            sess.run(training6, feed_dict={x6:batch_x6, y6:batch_y6})
-            sess.run(training7, feed_dict={x7:batch_x7, y7:batch_y7})
-            sess.run(training8, feed_dict={x8:batch_x8, y8:batch_y8})
-            sess.run(training9, feed_dict={x9:batch_x9, y9:batch_y9})
-            sess.run(training10, feed_dict={x10:batch_x10, y10:batch_y10})
+            training1.run(feed_dict={x1:batch_x1, y1:temp})
+            #sess.run(training2, feed_dict={x2:batch_x2, y2:batch_y2})
+            #sess.run(training3, feed_dict={x3:batch_x3, y3:batch_y3})
+            #sess.run(training4, feed_dict={x4:batch_x4, y4:batch_y4})
+            #sess.run(training5, feed_dict={x5:batch_x5, y5:batch_y5})
+            #sess.run(training6, feed_dict={x6:batch_x6, y6:batch_y6})
+            #sess.run(training7, feed_dict={x7:batch_x7, y7:batch_y7})
+            #sess.run(training8, feed_dict={x8:batch_x8, y8:batch_y8})
+            #sess.run(training9, feed_dict={x9:batch_x9, y9:batch_y9})
+            #sess.run(training10, feed_dict={x10:batch_x10, y10:batch_y10})
+            #print("loss", svm1.eval(feed_dict={x1:batch_x1, y1:batch_y1}))
         
-        
-        print("This is the accuracy ", (accuracy.eval(feed_dict={x1:mnist1.train.images, y1:y_labels1})))
-        #print("This is the accuracy ", (accuracy.eval(feed_dict={x2:mnist2.train.images, y2:y_labels2})))
+        print("Accuracy ", (accuracy1.eval(feed_dict={x1:mnist.train.images, y1:y_labels1})))
+        #print("This is the accuracy ", (accuracy2.eval(feed_dict={x2:mnist2.train.images, y2:y_labels2})))
         #print("This is the accuracy ", (accuracy.eval(feed_dict={x3:mnist3.train.images, y3:y_labels3})))
         #print("This is the accuracy ", (accuracy.eval(feed_dict={x4:mnist4.train.images, y4:y_labels4})))
         #print("This is the accuracy ", (accuracy.eval(feed_dict={x5:mnist5.train.images, y5:y_labels5})))
