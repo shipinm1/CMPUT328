@@ -40,6 +40,19 @@ def run(x_test,mnist,y_test):
     y_labels9 = mnist9.train.labels.astype(np.int32)
     y_labels10 = mnist10.train.labels.astype(np.int32)
     
+    print(y_labels1)
+    y_labels1[y_labels1 !=1] = -1
+    y_labels2[y_labels2 !=1] = -1
+    y_labels3[y_labels3 !=1] = -1
+    y_labels4[y_labels4 !=1] = -1
+    y_labels5[y_labels5 !=1] = -1
+    y_labels6[y_labels6 !=1] = -1
+    y_labels7[y_labels7 !=1] = -1
+    y_labels8[y_labels8 !=1] = -1
+    y_labels9[y_labels9 !=1] = -1
+    y_labels10[y_labels10 !=1] = -1
+    print(y_labels1)
+    
     #mnist1.train.labels[mnist1.train.labels != 1] = -1
     #mnist2.train.labels[mnist1.train.labels != 2] = -1
     #mnist3.train.labels[mnist1.train.labels != 3] = -1
