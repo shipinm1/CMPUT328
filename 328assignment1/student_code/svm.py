@@ -7,56 +7,100 @@ import timeit
 def run(x_test,mnist,y_test): 
     
     n_inputs = 28 * 28
+   
+    mnist1 = mnist
+    mnist1.train.labels.setflags(write = 1)
+    mnist2 = mnist
+    mnist2.train.labels.setflags(write = 1)
+    mnist3 = mnist
+    mnist3.train.labels.setflags(write = 1)
+    mnist4 = mnist
+    mnist4.train.labels.setflags(write = 1)
+    mnist5 = mnist
+    mnist5.train.labels.setflags(write = 1)
+    mnist6 = mnist
+    mnist6.train.labels.setflags(write = 1)
+    mnist7 = mnist
+    mnist7.train.labels.setflags(write = 1)
+    mnist8 = mnist
+    mnist8.train.labels.setflags(write = 1)
+    mnist9 = mnist
+    mnist9.train.labels.setflags(write = 1)
+    mnist10 = mnist
+    mnist10.train.labels.setflags(write = 1)
+    
+    y_labels1 = mnist1.train.labels.astype(np.int32)
+    y_labels2 = mnist2.train.labels.astype(np.int32)
+    y_labels3 = mnist3.train.labels.astype(np.int32)
+    y_labels4 = mnist4.train.labels.astype(np.int32)
+    y_labels5 = mnist5.train.labels.astype(np.int32)
+    y_labels6 = mnist6.train.labels.astype(np.int32)
+    y_labels7 = mnist7.train.labels.astype(np.int32)
+    y_labels8 = mnist8.train.labels.astype(np.int32)
+    y_labels9 = mnist9.train.labels.astype(np.int32)
+    y_labels10 = mnist10.train.labels.astype(np.int32)
+    
+    #mnist1.train.labels[mnist1.train.labels != 1] = -1
+    #mnist2.train.labels[mnist1.train.labels != 2] = -1
+    #mnist3.train.labels[mnist1.train.labels != 3] = -1
+    #mnist4.train.labels[mnist1.train.labels != 4] = -1
+    #mnist5.train.labels[mnist1.train.labels != 5] = -1
+    #mnist6.train.labels[mnist1.train.labels != 6] = -1
+    #mnist7.train.labels[mnist1.train.labels != 7] = -1
+    #mnist8.train.labels[mnist1.train.labels != 8] = -1
+    #mnist9.train.labels[mnist1.train.labels != 9] = -1
+    #mnist10.train.labels[mnist1.train.labels != 0] = -1
+    
     
     x1 = tf.placeholder(tf.float32,[None, n_inputs])      
     W1 = tf.Variable(tf.zeros([n_inputs,1]))                
     b1 = tf.Variable(tf.zeros([1]))                         
-    y1 = tf.placeholder(tf.float32,[None, 1])    
+    y1 = tf.placeholder(tf.float32,[None,])    
     
     x2 = tf.placeholder(tf.float32,[None, n_inputs])      
     W2 = tf.Variable(tf.zeros([n_inputs,1]))                
     b2 = tf.Variable(tf.zeros([1]))                         
-    y2 = tf.placeholder(tf.float32,[None, 1])
+    y2 = tf.placeholder(tf.float32,[None, ])
     
     x3 = tf.placeholder(tf.float32,[None, n_inputs])      
     W3 = tf.Variable(tf.zeros([n_inputs,1]))                
     b3 = tf.Variable(tf.zeros([1]))                         
-    y3 = tf.placeholder(tf.float32,[None, 1])
+    y3 = tf.placeholder(tf.float32,[None, ])
     
     x4 = tf.placeholder(tf.float32,[None, n_inputs])      
     W4 = tf.Variable(tf.zeros([n_inputs,1]))                
     b4 = tf.Variable(tf.zeros([1]))                         
-    y4 = tf.placeholder(tf.float32,[None, 1])
+    y4 = tf.placeholder(tf.float32,[None, ])
     
     x5 = tf.placeholder(tf.float32,[None, n_inputs])      
     W5 = tf.Variable(tf.zeros([n_inputs,1]))                
     b5 = tf.Variable(tf.zeros([1]))                         
-    y5 = tf.placeholder(tf.float32,[None, 1])
+    y5 = tf.placeholder(tf.float32,[None, ])
     
     x6 = tf.placeholder(tf.float32,[None, n_inputs])      
     W6 = tf.Variable(tf.zeros([n_inputs,1]))                
     b6 = tf.Variable(tf.zeros([1]))                         
-    y6 = tf.placeholder(tf.float32,[None, 1])
+    y6 = tf.placeholder(tf.float32,[None, ])
     
     x7 = tf.placeholder(tf.float32,[None, n_inputs])      
     W7 = tf.Variable(tf.zeros([n_inputs,1]))                
     b7 = tf.Variable(tf.zeros([1]))                         
-    y7 = tf.placeholder(tf.float32,[None, 1])
+    y7 = tf.placeholder(tf.float32,[None, ])
     
     x8 = tf.placeholder(tf.float32,[None, n_inputs])      
     W8 = tf.Variable(tf.zeros([n_inputs,1]))                
     b8 = tf.Variable(tf.zeros([1]))                         
-    y8 = tf.placeholder(tf.float32,[None, 1])
+    y8 = tf.placeholder(tf.float32,[None, ])
     
     x9 = tf.placeholder(tf.float32,[None, n_inputs])      
     W9 = tf.Variable(tf.zeros([n_inputs,1]))                
     b9 = tf.Variable(tf.zeros([1]))                         
-    y9 = tf.placeholder(tf.float32,[None, 1])
+    y9 = tf.placeholder(tf.float32,[None, ])
     
     x10 = tf.placeholder(tf.float32,[None, n_inputs])      
     W10 = tf.Variable(tf.zeros([n_inputs,1]))                
     b10 = tf.Variable(tf.zeros([1]))                         
-    y10 = tf.placeholder(tf.float32,[None, 1])    
+    y10 = tf.placeholder(tf.float32,[None, ])    
     
     
     
@@ -64,8 +108,6 @@ def run(x_test,mnist,y_test):
     C = 0.5 
     #C_range = [1e-7, 1e-6, 1e-5, 1e-4, 1e-3, 1e-2, 1e-1, 1e0, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6, 1e7]
     
-    #print("shape of W: ", W.shape)
-    #print("shape of b: ", b.shape)
     
     score1 = tf.matmul(x1,W1) + b1
     score2 = tf.matmul(x2,W2) + b2
@@ -78,10 +120,6 @@ def run(x_test,mnist,y_test):
     score9 = tf.matmul(x9,W9) + b9
     score10 = tf.matmul(x10,W10) + b10
     
-    #score = tf.transpose(tf.matmul(tf.transpose(W),x)) + b
-    #score = tf.transpose(score)
-    #print("shape of score: ", score.shape)
-    #print("shape of trans score: ",tf.transpose(score))
     lr = 0.001
     
     #hinge loss function
@@ -140,34 +178,54 @@ def run(x_test,mnist,y_test):
     n_epochs = 100
     batch_size = 200
     
+    predicted = tf.sign(score1)
+    correct_predicted = tf.equal(y1,predicted)
+    accuracy = tf.reduce_mean(tf.cast(correct_predicted, tf.float32))
+    
     with tf.Session() as sess:
         sess.run(init) 
         print("In Session")
         
-        #implementation from lecture slides
-        '''for epoch in range(n_epochs):
-            n_batches = mnist.train.num_examples // batch_size
-            for iteration in range(n_batches):              
-                x_batch,y_batch = mnist.train.next_batch(batch_size)
-                y_batch = y_batch.reshape(batch_size,1)
-                sess.run(training, feed_dict={x:x_batch, y:y_batch})
-            if epoch%10 == 0:
-                1'''
-        #implementation from https://www.tensorflow.org/get_started/mnist/beginners
-        
         for i in range(1000):
-            batch_x, batch_y = mnist.train.next_batch(batch_size)
-            batch_y = batch_y.reshape(batch_size,1)
+            batch_x1, batch_y1 = mnist1.train.next_batch(batch_size)
+            batch_x2, batch_y2 = mnist2.train.next_batch(batch_size)
+            batch_x3, batch_y3 = mnist3.train.next_batch(batch_size)
+            batch_x4, batch_y4 = mnist4.train.next_batch(batch_size)
+            batch_x5, batch_y5 = mnist5.train.next_batch(batch_size)
+            batch_x6, batch_y6 = mnist6.train.next_batch(batch_size)
+            batch_x7, batch_y7 = mnist7.train.next_batch(batch_size)
+            batch_x8, batch_y8 = mnist8.train.next_batch(batch_size)
+            batch_x9, batch_y9 = mnist9.train.next_batch(batch_size)
+            batch_x10, batch_y10 = mnist10.train.next_batch(batch_size)
             
-            sess.run(training1, feed_dict={x1:batch_x, y1:batch_y})
+            #batch_y = batch_y.reshape(batch_size,1)
+            
+            sess.run(training1, feed_dict={x1:batch_x1, y1:batch_y1})
+            sess.run(training2, feed_dict={x2:batch_x2, y2:batch_y2})
+            sess.run(training3, feed_dict={x3:batch_x3, y3:batch_y3})
+            sess.run(training4, feed_dict={x4:batch_x4, y4:batch_y4})
+            sess.run(training5, feed_dict={x5:batch_x5, y5:batch_y5})
+            sess.run(training6, feed_dict={x6:batch_x6, y6:batch_y6})
+            sess.run(training7, feed_dict={x7:batch_x7, y7:batch_y7})
+            sess.run(training8, feed_dict={x8:batch_x8, y8:batch_y8})
+            sess.run(training9, feed_dict={x9:batch_x9, y9:batch_y9})
+            sess.run(training10, feed_dict={x10:batch_x10, y10:batch_y10})
         
         
-        
-    #correct_prediction = tf.equal(tf.argmax(y,1), tf.argmax(y_,1))
-    #accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
-    #print(sess.run(accuracy, feed_dict={x:mnist.test.images, y:mnist.test.labels}))
-    predicted_y_test = tf.sign(svm1)
+        print("This is the accuracy ", (accuracy.eval(feed_dict={x1:mnist1.train.images, y1:y_labels1})))
+        #print("This is the accuracy ", (accuracy.eval(feed_dict={x2:mnist2.train.images, y2:y_labels2})))
+        #print("This is the accuracy ", (accuracy.eval(feed_dict={x3:mnist3.train.images, y3:y_labels3})))
+        #print("This is the accuracy ", (accuracy.eval(feed_dict={x4:mnist4.train.images, y4:y_labels4})))
+        #print("This is the accuracy ", (accuracy.eval(feed_dict={x5:mnist5.train.images, y5:y_labels5})))
+        #print("This is the accuracy ", (accuracy.eval(feed_dict={x6:mnist6.train.images, y6:y_labels6})))
+        #print("This is the accuracy ", (accuracy.eval(feed_dict={x7:mnist7.train.images, y7:y_labels7})))
+        #print("This is the accuracy ", (accuracy.eval(feed_dict={x8:mnist8.train.images, y8:y_labels8})))
+        #print("This is the accuracy ", (accuracy.eval(feed_dict={x9:mnist9.train.images, y9:y_labels9})))
+        #print("This is the accuracy ", (accuracy.eval(feed_dict={x10:mnist10.train.images, y10:y_labels10})))
     
+    
+    
+    predicted_y_test = tf.sign(score1)
     return predicted_y_test
 
 
