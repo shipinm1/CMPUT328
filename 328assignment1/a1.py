@@ -9,7 +9,7 @@ import numpy as np
 from tensorflow.contrib.learn.python.learn.datasets.mnist import read_data_sets
 import timeit
 
-mnist      = input_data.read_data_sets("/tmp/data/", one_hot = True)
+mnist      = input_data.read_data_sets("/tmp/data/", one_hot = False)
 batch_size = 100
 n_epoch    = 50
 FLAGS      = None
@@ -39,20 +39,32 @@ def main( _ ):
 			for _ in range( int( mnist.train.num_examples / batch_size ) ):
 
 				epoch_x, epoch_y = mnist.train.next_batch( batch_size )
+
+				one_hot_epoch_y = np.zeros( [ len( epoch_y ), 10 ] )
+
+				for i in range( len( epoch_y ) ):
+					one_hot_epoch_y[i][epoch_y[i]] = 1
+
 				_, c = sess.run( [optimizer, loss], feed_dict = { x: epoch_x, \
-				                                                  y: epoch_y } )
+				                                                  y: one_hot_epoch_y } )
 				epoch_loss += c
 
 			print( "\x1b[1A\x1b[2K\x1b[1A\x1b[2KPercentage:",
 			       ( ( epoch + 1 ) * 100 / n_epoch ),
 			       "\nloss:", epoch_loss )
 
-		correct = tf.equal( tf.argmax( prediction, 1 ), tf.argmax( y, 1 ) )
+		correct   = tf.equal( tf.argmax( prediction, 1 ), tf.argmax( y, 1 ) )
 
-		accuracy = tf.reduce_mean( tf.cast( correct, 'float' ) )
+		accuracy  = tf.reduce_mean( tf.cast( correct, 'float' ) )
+
+		yt        = mnist.test.labels
+		one_hot_y = np.zeros( [ len( yt ), 10 ] )
+
+		for i in range( len( yt ) ):
+			one_hot_y[i][yt[i]] = 1
 
 		print( 'Accuracy:', accuracy.eval( { x: mnist.test.images, \
-		                                     y: mnist.test.labels } ) )
+		                                     y: one_hot_y } ) )
 
 		
 
