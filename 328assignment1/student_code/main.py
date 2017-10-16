@@ -14,10 +14,7 @@ def run(mnist,algorithm, x_test, y_test, algorithm_name='Algorithm'):
     np.random.seed()
     stop = timeit.default_timer()
     run_time = stop - start
-
     correct_predict = (y_test == predicted_y_test).astype(np.int32).sum()
-    #correct_predict = (y_test == y_test).astype(np.int32).sum()
-    
     incorrect_predict = len(y_test) - correct_predict
     accuracy = float(correct_predict) / len(y_test)
 
@@ -36,7 +33,8 @@ if __name__ == '__main__':
             last_name='guan',
         )
     ]
-    for algorithm in [svm, exponential, knn]:
+    for algorithm in [svm]:
+    #for algorithm in [svm, exponential, knn]:
         x_valid, y_valid = mnist.validation._images, mnist.validation.labels
         if algorithm.__name__ == 'knn':
             x_valid, y_valid = x_valid[:1000], y_valid[:1000]
