@@ -1,5 +1,5 @@
 [   OrderedDict([('last_name', 'guan'), ('first_name', 'shipin')]),
-    OrderedDict([   ('run_time', 153.0745314285689),
-                    ('correct_predict', 4097),
-                    ('accuracy', 0.8194),
-                    ('algorithm_name', 'svm')])]
+    OrderedDict([   ('correct_predict', 4394),
+                    ('run_time', 621.2422844857016),
+                    ('algorithm_name', 'svm'),
+                    ('accuracy', 0.8788)])]

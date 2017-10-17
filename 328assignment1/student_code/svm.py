@@ -9,39 +9,39 @@ def run(x_test,mnist,y_test):
     
     #parameter initializing
     x = tf.placeholder(tf.float32,[None, n_inputs])      
-    W1 = tf.Variable(tf.zeros([n_inputs,1]))                
+    W1 = tf.Variable(tf.random_normal([n_inputs,1]))                
     b1 = tf.Variable(tf.zeros([1]))                         
     y = tf.placeholder(tf.float32,[None, 1])    
 
-    W2 = tf.Variable(tf.zeros([n_inputs,1]))                
+    W2 = tf.Variable(tf.random_normal([n_inputs,1]))                
     b2 = tf.Variable(tf.zeros([1]))                         
    
-    W3 = tf.Variable(tf.zeros([n_inputs,1]))                
+    W3 = tf.Variable(tf.random_normal([n_inputs,1]))                
     b3 = tf.Variable(tf.zeros([1]))                         
   
-    W4 = tf.Variable(tf.zeros([n_inputs,1]))                
+    W4 = tf.Variable(tf.random_normal([n_inputs,1]))                
     b4 = tf.Variable(tf.zeros([1]))                         
    
-    W5 = tf.Variable(tf.zeros([n_inputs,1]))                
+    W5 = tf.Variable(tf.random_normal([n_inputs,1]))                
     b5 = tf.Variable(tf.zeros([1]))                         
 
-    W6 = tf.Variable(tf.zeros([n_inputs,1]))                
+    W6 = tf.Variable(tf.random_normal([n_inputs,1]))                
     b6 = tf.Variable(tf.zeros([1]))                         
   
-    W7 = tf.Variable(tf.zeros([n_inputs,1]))                
+    W7 = tf.Variable(tf.random_normal([n_inputs,1]))                
     b7 = tf.Variable(tf.zeros([1]))                         
   
-    W8 = tf.Variable(tf.zeros([n_inputs,1]))                
+    W8 = tf.Variable(tf.random_normal([n_inputs,1]))                
     b8 = tf.Variable(tf.zeros([1]))                         
    
-    W9 = tf.Variable(tf.zeros([n_inputs,1]))                
+    W9 = tf.Variable(tf.random_normal([n_inputs,1]))                
     b9 = tf.Variable(tf.zeros([1]))                         
 
-    W10 = tf.Variable(tf.zeros([n_inputs,1]))                
+    W10 = tf.Variable(tf.random_normal([n_inputs,1]))                
     b10 = tf.Variable(tf.zeros([1]))                         
   
     #C hyperparameter
-    C = 0.5 
+    C = 1
     
     #score function
     score1 = tf.matmul(x,W1) + b1
@@ -54,9 +54,7 @@ def run(x_test,mnist,y_test):
     score8 = tf.matmul(x,W8) + b8
     score9 = tf.matmul(x,W9) + b9
     score10 = tf.matmul(x,W10) + b10
-    print(score1.shape)
-    print(y.shape)
-    lr = 0.01
+    lr = 0.001
     
     #loss function implementation
     regularization_loss1 = 0.5 * tf.reduce_sum(tf.square(W1))
@@ -119,7 +117,7 @@ def run(x_test,mnist,y_test):
         #sess.run(init) 
         print("In Session")
         
-        for i in range(20000):
+        for i in range(80000):
             if (i % 2000 == 0):
                 print("In step: ", i)
             batch_x, batch_y = mnist.train.next_batch(batch_size)
@@ -188,7 +186,7 @@ def run(x_test,mnist,y_test):
         
         #print("Accuracy ", (accuracy1.eval(feed_dict={x1:mnist.test.images, y1:mnist.test.labels})))
     
-    #print(predicted_y_test)
+    print(predicted_y_test)
     #predicted_y_test.append(np.random.randint(10, size = 5000))
     return predicted_y_test
 
