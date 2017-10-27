@@ -109,7 +109,11 @@ def run(x_test,mnist,y_test):
     
     n_samples = 55000
     n_epochs = 100
+<<<<<<< HEAD
     batch_size = 400
+=======
+    batch_size = 200
+>>>>>>> 6a278c09606cf5fa6f60f67bd79878e2c4c22a90
     
     
     with tf.Session() as sess:
@@ -117,9 +121,15 @@ def run(x_test,mnist,y_test):
         #sess.run(init) 
         print("In Session")
         
+<<<<<<< HEAD
         for i in range(30000):
             if (i % 2000 == 0):
                 print("In step: ", i, "target 30000")
+=======
+        for i in range(80000):
+            if (i % 2000 == 0):
+                print("In step: ", i)
+>>>>>>> 6a278c09606cf5fa6f60f67bd79878e2c4c22a90
             batch_x, batch_y = mnist.train.next_batch(batch_size)
             batch_y = batch_y.reshape(batch_size,1)
             
@@ -153,6 +163,11 @@ def run(x_test,mnist,y_test):
             temp10 = batch_y.astype(np.int32)
             temp10[temp10 !=0] = -1
             
+<<<<<<< HEAD
+=======
+            
+            
+>>>>>>> 6a278c09606cf5fa6f60f67bd79878e2c4c22a90
             training1.run( feed_dict={x:batch_x, y:temp1})
             training2.run( feed_dict={x:batch_x, y:temp2})
             training3.run( feed_dict={x:batch_x, y:temp3})
@@ -165,6 +180,10 @@ def run(x_test,mnist,y_test):
             training10.run( feed_dict={x:batch_x, y:temp10})
             #print("loss", svm1.eval(feed_dict={x1:batch_x1, y1:batch_y1}))
         
+<<<<<<< HEAD
+=======
+        
+>>>>>>> 6a278c09606cf5fa6f60f67bd79878e2c4c22a90
         s1=score1.eval(feed_dict = {x:x_test})
         s2=score2.eval(feed_dict = {x:x_test})
         s3=score3.eval(feed_dict = {x:x_test})
@@ -183,7 +202,11 @@ def run(x_test,mnist,y_test):
         
         #print("Accuracy ", (accuracy1.eval(feed_dict={x1:mnist.test.images, y1:mnist.test.labels})))
     
+<<<<<<< HEAD
     #print(predicted_y_test)
+=======
+    print(predicted_y_test)
+>>>>>>> 6a278c09606cf5fa6f60f67bd79878e2c4c22a90
     #predicted_y_test.append(np.random.randint(10, size = 5000))
     return predicted_y_test
 

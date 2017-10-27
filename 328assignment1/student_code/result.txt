@@ -1,4 +1,5 @@
 [   OrderedDict([('last_name', 'guan'), ('first_name', 'shipin')]),
+<<<<<<< HEAD
     OrderedDict([   ('correct_predict', 4401),
                     ('accuracy', 0.8802),
                     ('algorithm_name', 'svm'),
@@ -11,3 +12,9 @@
                     ('accuracy', 0.963),
                     ('algorithm_name', 'knn'),
                     ('run_time', 49.2905973472524)])]
+=======
+    OrderedDict([   ('correct_predict', 4394),
+                    ('run_time', 621.2422844857016),
+                    ('algorithm_name', 'svm'),
+                    ('accuracy', 0.8788)])]
+>>>>>>> 6a278c09606cf5fa6f60f67bd79878e2c4c22a90
