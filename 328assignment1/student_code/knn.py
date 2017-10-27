@@ -8,7 +8,7 @@ def run(x_test,mnist,y_test):
     n_inputs = 28 * 28
     predicted_y_test = []
     mnist = read_data_sets("data", one_hot=True)
-    Xtr, Ytr = mnist.train.next_batch(20000)
+    Xtr, Ytr = mnist.train.next_batch(30000)
     #Xte, Yte = mnist.test.next_batch(1000)
     
     k = 4
@@ -31,7 +31,7 @@ def run(x_test,mnist,y_test):
             pos = sess.run(predicted, feed_dict={x_train: Xtr, x_te:x_test[_, :]})
             
             if (_%500 == 0):
-                print("running")
+                print("in step: ",_,"target 5000")
                 #print("test" , _, "prediction: ", np.argmax(Ytr[pos]), "True class", np.argmax(Yte[_]))
             
             predicted_y_test.append(np.argmax(Ytr[pos]))

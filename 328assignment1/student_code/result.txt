@@ -1,5 +1,13 @@
 [   OrderedDict([('last_name', 'guan'), ('first_name', 'shipin')]),
-    OrderedDict([   ('accuracy', 0.1102),
+    OrderedDict([   ('correct_predict', 4401),
+                    ('accuracy', 0.8802),
                     ('algorithm_name', 'svm'),
-                    ('correct_predict', 551),
-                    ('run_time', 16.01962900368033)])]
+                    ('run_time', 204.55515775838612)]),
+    OrderedDict([   ('correct_predict', 4024),
+                    ('accuracy', 0.8048),
+                    ('algorithm_name', 'exponential'),
+                    ('run_time', 53.99170553300863)]),
+    OrderedDict([   ('correct_predict', 963),
+                    ('accuracy', 0.963),
+                    ('algorithm_name', 'knn'),
+                    ('run_time', 49.2905973472524)])]
