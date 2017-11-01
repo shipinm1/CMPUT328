@@ -7,7 +7,7 @@ from pprint import pformat
 
 
 if __name__ == '__main__':
-    TRAIN = False
+    TRAIN = True
     if TRAIN:
         train()
     cifar10_test = Cifar10(test=True, shuffle=False, one_hot=False)
@@ -19,6 +19,7 @@ if __name__ == '__main__':
     np.random.seed()
     stop = timeit.default_timer()
     run_time = stop - start
+    #correct_predict = (cifar10_test_labels.flatten() == cifar10_test_labels.flatten()).astype(np.int32).sum()
     correct_predict = (cifar10_test_labels.flatten() == predicted_cifar10_test_labels.flatten()).astype(np.int32).sum()
     incorrect_predict = len(cifar10_test_labels) - correct_predict
     accuracy = float(correct_predict) / len(cifar10_test_labels)
