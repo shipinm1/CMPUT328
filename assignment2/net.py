@@ -25,8 +25,9 @@ def net(input, is_training, dropout_kept_prob):
   conv1 = tf.nn.conv2d(input, conv1_w, strides = [1, 1, 1, 1], padding = 'VALID') + conv1_b #(28,28,8)
   #activation function relu
   conv1 = tf.nn.relu(conv1)
+  norm1 = tf.nn.lrn(conv1, 4, bias = 1.0, alpha = 0.001/9, beta = 0.75, name = 'norm1')
   #max pooling
-  conv1 = tf.nn.max_pool(conv1, ksize = [1, 2, 2, 1], strides = [1, 2, 2, 1], padding = 'VALID')#(14,14,8)
+  conv1 = tf.nn.max_pool(norm1, ksize = [1, 2, 2, 1], strides = [1, 2, 2, 1], padding = 'VALID')#(14,14,8)
   #print(conv1)
   
   '''second convolutional layer'''
@@ -78,6 +79,7 @@ def train():
   # AT TEST TIME, LOAD THE MODEL AND RUN TEST ON THE TEST SET
   x = tf.placeholder(tf.float32, (None, 32, 32, 3))
   y = tf.placeholder(tf.int32, (None))
+  one_hot_y = tf.one_hot(y,10)
   
   '''data preparation'''
   cifar10_train = Cifar10(batch_size = 100, one_hot = True, test = False, shuffle = True)
@@ -93,14 +95,16 @@ def train():
   cross_entropy = tf.nn.softmax_cross_entropy_with_logits(logits = logits, labels = y)
   loss = tf.reduce_mean(cross_entropy)
   optimizer = tf.train.AdamOptimizer(learning_rate = lr)
-  gav = optimizer.compute_gradients(loss, tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES))
-  training_operation = optimizer.apply_gradients(gav)
+  grads_and_vars = optimizer.compute_gradients(loss, tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES))
+  training_operation = optimizer.apply_gradients(grads_and_vars)
+  #training_operation = optimizer.minimize(grads_and_vars)
+  #train = tf.train.AdamOptimizer.minimize(loss)
   
   '''create summary'''
   for var in tf.trainable_variables():
     tf.summary.histogram(var.op.name + "/histogram", var)
 
-  add_gradient_summaries(gav)
+  add_gradient_summaries(grads_and_vars)
   tf.summary.scalar('loss_operation', loss)
   merged_summary_op= tf.summary.merge_all()
   summary_writer = tf.summary.FileWriter('logs/')
@@ -117,31 +121,34 @@ def train():
     #saver.restore(sess, tf.train.latest_checkpoint('ckpt'))
     print("Training")
     global_step = 0
-    for i in range(1000):
+    for i in range(100):
       for offset in range(0, 500):
         batch_x, batch_y = cifar10_train.get_next_batch()
         _, summaries = sess.run([training_operation, merged_summary_op], feed_dict = {x: batch_x, y: batch_y})
-        if global_step % 100 ==1:
+        if global_step % 100 == 1:
           print("steps: ", global_step, "|time consume: ", (time.time() - start_time)/3600, "hours.")
           summary_writer.add_summary(summaries, global_step = global_step)
+        if global_step % 500 == 0:
+          _loss = sess.run(loss, feed_dict = {x:batch_x, y:batch_y})
+          print("current loss: ", _loss, "Step: ", global_step)
         global_step += 1
-        
+      ''' 
       #validation_accuracy = evaluate(test_images, test_labels, accuracy_operation)
       total_accuracy = 0
       test_x, test_y = cifar10_test.get_next_batch()
       accuracy = sess.run(accuracy_operation, feed_dict={x: batch_x, y: batch_y})
-      total_accuracy += (accuracy * len(batch_x))      
+      total_accuracy += (accuracy * len(batch_x))     
+      '''
+      training_accuracy = evaluate(batch_x, batch_y, accuracy_operation, x, y)
       print("sets: ", i)
-      print(tf.argmax(logits, 1))
-      print(tf.argmax(y,1))
-      print("accuracy: ", total_accuracy, " / ", len(batch_y))
+      print("accuracy: ", training_accuracy, " / ", len(batch_y))
       print()
       saver.save(sess, 'ckpt/netCheckpoint', global_step = i)
   
   
   
   
-def evaluate(X_data, y_data, accuracy_operation):
+def evaluate(X_data, y_data, accuracy_operation, x, y):
     num_examples = len(X_data)
     total_accuracy = 0
     sess = tf.get_default_session()
