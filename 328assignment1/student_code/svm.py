@@ -117,7 +117,7 @@ def run(x_test,mnist,y_test):
         #sess.run(init) 
         print("In Session")
         
-        for i in range(80000):
+        for i in range(40000):
             if (i % 2000 == 0):
                 print("In step: ", i)
             batch_x, batch_y = mnist.train.next_batch(batch_size)
