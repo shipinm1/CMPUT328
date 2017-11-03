@@ -1,9 +1,10 @@
 from ops import *
 import timeit
 import time
-from ops import batch_norm
+#from ops import batch_norm, testing, evaluate
 from cifar10 import Cifar10
 from tensorflow.contrib.layers import flatten
+
 BATCH_SIZE = 100
 
 def net(input, is_training, dropout_kept_prob):
@@ -21,6 +22,7 @@ def net(input, is_training, dropout_kept_prob):
   
   '''first convolutional layer'''
   conv1_w = tf.Variable(tf.truncated_normal(shape = (5, 5, 3, 64), mean = mu, stddev = sigma), name = 'conv1_w')
+  conv1_w = tf.get_variable("conv1_w", shape = [5,5,3,64], initializer=tf.contrib.layers.xavier_initializer())
   conv1_b = tf.Variable(tf.zeros(64), name = 'conv1_b')
   conv1 = tf.nn.conv2d(input, conv1_w, strides = [1, 1, 1, 1], padding = 'VALID') + conv1_b #(28,28,64)
   #activation function relu
@@ -121,12 +123,9 @@ def train():
   cifar10_test = Cifar10(batch_size = 100, one_hot = False, test = True, shuffle = False)
   test_images, test_labels = cifar10_test.images, cifar10_test.labels
   
-  #print(batch_y[0])
   
-  
-  
-  lr = 0.000001
-  logits = net(x, True, 0.8)
+  lr = 0.0001
+  logits = net(x, True, 0.7)
   cross_entropy = tf.nn.softmax_cross_entropy_with_logits(logits = logits, labels = y)
   loss = tf.reduce_mean(cross_entropy)
   optimizer = tf.train.AdamOptimizer(learning_rate = lr)
@@ -165,7 +164,7 @@ def train():
     
     print("Training")
     global_step = 0
-    for i in range(1000):
+    for i in range(100):
       for offset in range(0, 500):
         batch_x, batch_y = cifar10_train.get_next_batch()
         _, summaries = sess.run([training_operation, merged_summary_op], feed_dict = {x: batch_x, y: batch_y})
@@ -189,25 +188,6 @@ def train():
       print()
       saver.save(sess, 'ckpt/netCheckpoint', global_step = i)
   
-  
-  
-  
-def evaluate(X_data, y_data, accuracy_operation, x, y):
-    num_examples = len(X_data)
-    total_accuracy = 0
-    sess = tf.get_default_session()
-    for offset in range(0, num_examples, BATCH_SIZE):
-        batch_x, batch_y = X_data[offset:offset+BATCH_SIZE], y_data[offset:offset+BATCH_SIZE]
-        accuracy = sess.run(accuracy_operation, feed_dict={x: batch_x, y: batch_y})
-        total_accuracy += (accuracy * len(batch_x))
-    return total_accuracy / num_examples  
-  
-  
-def add_gradient_summaries(grads_and_vars):
-    for grad, var in grads_and_vars:
-        if grad is not None:
-            tf.summary.histogram(var.op.name + "/gradient", grad)
-
 
 
 def test(cifar10_test_images):
@@ -223,8 +203,12 @@ def test(cifar10_test_images):
   # LOAD THE MODEL AND RUN TEST ON THE TEST SET
   
   x = tf.placeholder(tf.float32, (None, 32, 32, 3))
+  
+  logits = net(x, False, 1.0)
   saver = tf.train.Saver()
   with tf.Session() as sess:
     saver.restore(sess, tf.train.latest_checkpoint('ckpt'))
-    test_accuracy = evaluate(cifar10_test_images)
-  
+    test_accuracy = testing(cifar10_test_images, logits, x)
+    #print(test_accuracy)
+    output = np.argmax(test_accuracy, 1)
+  return output
