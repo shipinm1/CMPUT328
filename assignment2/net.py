@@ -1,11 +1,16 @@
 from ops import *
 import timeit
+<<<<<<< HEAD
 import time
 #from ops import batch_norm, testing, evaluate
 from cifar10 import Cifar10
 from tensorflow.contrib.layers import flatten
 
 BATCH_SIZE = 100
+=======
+from cifar10 import Cifar10
+
+>>>>>>> master
 
 def net(input, is_training, dropout_kept_prob):
   # TODO: Write your network architecture here
@@ -17,6 +22,7 @@ def net(input, is_training, dropout_kept_prob):
   # - At least one batch norm
   # - At least one skip connection
   # - Use dropout
+<<<<<<< HEAD
   mu = 0
   sigma = 0.1
   
@@ -101,6 +107,9 @@ def net(input, is_training, dropout_kept_prob):
   return flf
 
 
+=======
+  raise NotImplementedError
+>>>>>>> master
 
 def train():
   # Always use tf.reset_default_graph() to avoid error
@@ -113,6 +122,7 @@ def train():
   # AS IT WILL TAKE VERY LONG ON CIFAR10 DATASET TO TRAIN
   # YOU SHOULD USE tf.train.Saver() TO SAVE YOUR MODEL AFTER TRAINING
   # AT TEST TIME, LOAD THE MODEL AND RUN TEST ON THE TEST SET
+<<<<<<< HEAD
   
   x = tf.placeholder(tf.float32, (None, 32, 32, 3))
   y = tf.placeholder(tf.int32, (None))
@@ -189,6 +199,9 @@ def train():
       saver.save(sess, 'ckpt/netCheckpoint', global_step = i)
   
 
+=======
+  raise NotImplementedError
+>>>>>>> master
 
 def test(cifar10_test_images):
   # Always use tf.reset_default_graph() to avoid error
@@ -201,6 +214,7 @@ def test(cifar10_test_images):
   # - Run testing
   # DO NOT RUN TRAINING HERE!
   # LOAD THE MODEL AND RUN TEST ON THE TEST SET
+<<<<<<< HEAD
   
   x = tf.placeholder(tf.float32, (None, 32, 32, 3))
   
@@ -212,3 +226,6 @@ def test(cifar10_test_images):
     #print(test_accuracy)
     output = np.argmax(test_accuracy, 1)
   return output
+=======
+  raise NotImplementedError
+>>>>>>> master

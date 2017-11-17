@@ -197,4 +197,8 @@ def hyperparameters_search():
 
 
 if __name__ == '__main__':
+<<<<<<< HEAD
 	hyperparameters_search()
+=======
+	hyperparameters_search()
+>>>>>>> master

@@ -1,7 +1,11 @@
 # Reference: https://github.com/openai/improved-gan/blob/master/imagenet/ops.py
 import tensorflow as tf
 import numpy as np
+<<<<<<< HEAD
 BATCH_SIZE = 100
+=======
+
+>>>>>>> master
 
 # TODO: Optionally create utility functions for convolution, fully connected layers here
 
@@ -25,6 +29,7 @@ def batch_norm(input, is_training, momentum=0.9, epsilon=1e-5, in_place_update=T
                                         epsilon=epsilon,
                                         is_training=is_training,
                                         scope=name)
+<<<<<<< HEAD
 
 
 def evaluate(X_data, y_data, accuracy_operation, x, y):
@@ -51,3 +56,5 @@ def add_gradient_summaries(grads_and_vars):
     for grad, var in grads_and_vars:
         if grad is not None:
             tf.summary.histogram(var.op.name + "/gradient", grad)
+=======
+>>>>>>> master
