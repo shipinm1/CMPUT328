@@ -179,7 +179,7 @@ def run(x_test,mnist,y_test):
         s9=score9.eval(feed_dict = {x:x_test})
         s10=score10.eval(feed_dict = {x:x_test})
         
-        for _ in range(5000):
+        for _ in range(len(s1)):
             temp_list = []
             temp_list.extend([s10[_],s1[_],s2[_],s3[_],s4[_],s5[_],s6[_],s7[_],s8[_],s9[_]])
             predicted_y_test.append(temp_list.index(max(temp_list)))

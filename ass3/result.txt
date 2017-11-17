@@ -1,0 +1,10 @@
+[   OrderedDict([   ('last_name', 'Insert your Last name here'),
+                    ('first_name', 'Insert your First name here')]),
+    OrderedDict([   ('accuracy', 0.9678),
+                    ('score', 46.400000000000006),
+                    ('run_time', 34.08690153605129),
+                    ('algorithm_name', 'autoencoder')]),
+    OrderedDict([   ('score', 0.0),
+                    ('error_message', "name 'logits' is not defined"),
+                    ('algorithm_name', 'semantic_segmentation')]),
+    {'total_score': 46.400000000000006}]
