@@ -15,70 +15,24 @@ def SemSeg(input_tensor, is_training):
     # you can use tf.image.resize_bilinear
     
         
-    #conv1
-    print(input_tensor)
-    conv1 = tf.layers.conv2d(inputs = input_tensor, filters = 64, kernel_size = [3,3], padding = "valid", activation = tf.nn.relu)
+    
+    
+    conv1 = tf.layers.conv2d(inputs = input_tensor, filters = 5, kernel_size = [5,5], padding = "valid", activation = tf.nn.relu)
     #print("shape of conv1: ", conv1) #192, 192, 2
-    #pool1
-    pool1 = tf.layers.max_pooling2d(inputs = conv1, pool_size = [3, 3], strides = 3)
+    pool1 = tf.layers.max_pooling2d(inputs = conv1, pool_size = [2,2], strides = 2)
     #print("shape of pool1: ", pool1) #96, 96, 2
-    #conv2
-    conv2 = tf.layers.conv2d(inputs = pool1, filters = 128, kernel_size = [3, 3], padding = "valid", activation = tf.nn.relu)
+    conv2 = tf.layers.conv2d(inputs = pool1, filters = 5, kernel_size = [3, 3], padding = "valid", activation = tf.nn.relu)
     #print("shape of conv2: ", conv2)
-    #pool2
-    pool2 = tf.layers.max_pooling2d(inputs = conv2, pool_size = [3, 3], strides = 3)
-    #print("shape of pool2: ", pool2)    
-    
-    #print("")
-    #print("fully connected")
-    #fc
-    fc = tf.layers.conv2d(inputs = pool2, filters = 4096, kernel_size = [7, 7], padding = "valid", activation = tf.nn.relu)
-    #print("fc shape: ", fc)
-    fc2 = tf.layers.conv2d(inputs = fc, filters = 4096, kernel_size = [1, 1], padding = "valid", activation = tf.nn.relu)
-    #print("fc2 shape: ", fc2)    
-    #print("")
-    
-    #deconv1
-    upsample1 = tf.layers.conv2d_transpose(inputs = fc2, filters = 128, kernel_size = [7, 7], strides = 1, padding = "valid", activation = tf.nn.relu)
-    #print("deconv1 upsample1: ", upsample1)
-    
-    def UnPooling(x):
-        # https://github.com/tensorflow/tensorflow/issues/2169
-        out = tf.concat([x, tf.zeros_like(x)], 3)
-        out = tf.concat([out, tf.zeros_like(out)], 2)
-        
-        sh = x.get_shape().as_list()
-        if None not in sh[1:]:
-            out_size = [-1, sh[1] * 2, sh[2] * 2, sh[3]]
-            return tf.reshape(out, out_size)
-        else:
-            shv = tf.shape(x)
-            ret = tf.reshape(out, tf.stack([-1, shv[1] * 2, shv[2] * 2, sh[3]]))
-            return ret   
-        
-    
-    #unpool1
-    unpool1 = UnPooling(upsample1)
-    unpool1 = tf.image.resize_bilinear(unpool1,[62,62])
-    #print("unpooled unpool2: ", unpool1)
-    
-    #deconv2
-    upsample2 = tf.layers.conv2d_transpose(inputs = unpool1, filters = 64, kernel_size = [3, 3], strides = 1, padding = "valid", activation = tf.nn.relu)
-    #print("deconv2 upsample2: ", upsample2)
-    
-    #unpool2
-    unpool2 = UnPooling(upsample2)
-    unpool2 = tf.image.resize_bilinear(unpool2,[194,194])
-    #print("unpooled unpool2: ", unpool2)    
-    
-    #deconv21
-    upsample21 = tf.layers.conv2d_transpose(inputs = unpool2, filters = 5, kernel_size = [3, 3], strides = 1, padding = "valid", activation = tf.nn.relu)
-    #print("deconv21 upsample2: ", upsample21)    
-    
-        
-    
-    logits = tf.nn.softmax(upsample21)
-    print(logits)
+    pool2 = tf.layers.max_pooling2d(inputs = conv2, pool_size = [2, 2], strides = 2)
+    #print("shape of pool2: ", pool2)
+    upsample = tf.layers.conv2d_transpose(inputs = pool2, filters = 5, kernel_size = [12, 12], strides = 4, padding = "valid", activation = tf.nn.relu)
+    print("shape of upsample: ", upsample)
+    #skip connection
+    #skip = tf.add(upsample, pool1)
+    #print("shape of skip: ", skip)
+    #conv_logits = tf.layers.conv2d_transpose(inputs = skip, filters = 5, kernel_size = [6, 6], strides = 2, padding = "valid", activation = tf.nn.relu)
+    #print("shape of logits: ", conv_logits)
+    logits = tf.nn.softmax(upsample)
     
     
     return logits
@@ -99,7 +53,7 @@ def run():
     one_hot_y = tf.one_hot(y, 5)
     is_training = tf.placeholder(tf.bool, ())
 
-    rate = 0.0001
+    rate = 0.0045
     logits = SemSeg(x, is_training=is_training)
     prediction = tf.argmax(logits, axis=-1)
     cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=logits, labels=one_hot_y))

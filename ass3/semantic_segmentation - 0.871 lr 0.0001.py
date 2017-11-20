@@ -4,6 +4,7 @@ from input_helper import TextureImages
 
 
 def SemSeg(input_tensor, is_training):
+    from tensorflow.contrib.layers import flatten
     # TODO: Implement Semantic Segmentation network here
     # Returned logits must be a tensor of size:
     # (None, image_height, image_width, num_classes + 1)
@@ -18,68 +19,53 @@ def SemSeg(input_tensor, is_training):
     #conv1
     print(input_tensor)
     conv1 = tf.layers.conv2d(inputs = input_tensor, filters = 64, kernel_size = [3,3], padding = "valid", activation = tf.nn.relu)
-    #print("shape of conv1: ", conv1) #192, 192, 2
+    print("shape of conv1: ", conv1) #192, 192, 2
     #pool1
-    pool1 = tf.layers.max_pooling2d(inputs = conv1, pool_size = [3, 3], strides = 3)
-    #print("shape of pool1: ", pool1) #96, 96, 2
+    pool1 = tf.layers.max_pooling2d(inputs = conv1, pool_size = [4,4], strides = 4)
+    print("shape of pool1: ", pool1) #96, 96, 2
     #conv2
     conv2 = tf.layers.conv2d(inputs = pool1, filters = 128, kernel_size = [3, 3], padding = "valid", activation = tf.nn.relu)
-    #print("shape of conv2: ", conv2)
+    print("shape of conv2: ", conv2)
     #pool2
-    pool2 = tf.layers.max_pooling2d(inputs = conv2, pool_size = [3, 3], strides = 3)
-    #print("shape of pool2: ", pool2)    
+    pool2 = tf.layers.max_pooling2d(inputs = conv2, pool_size = [4, 4], strides = 4)
+    print("shape of pool2: ", pool2) 
     
-    #print("")
-    #print("fully connected")
+    print("")
+    print("fully connected")
     #fc
-    fc = tf.layers.conv2d(inputs = pool2, filters = 4096, kernel_size = [7, 7], padding = "valid", activation = tf.nn.relu)
-    #print("fc shape: ", fc)
+    fc = tf.layers.conv2d(inputs = pool2, filters = 4096, kernel_size = [11, 11], padding = "valid", activation = tf.nn.relu)
+    print("fc shape: ", fc)
     fc2 = tf.layers.conv2d(inputs = fc, filters = 4096, kernel_size = [1, 1], padding = "valid", activation = tf.nn.relu)
-    #print("fc2 shape: ", fc2)    
-    #print("")
+    print("fc2 shape: ", fc2)    
+    print("")
     
     #deconv1
-    upsample1 = tf.layers.conv2d_transpose(inputs = fc2, filters = 128, kernel_size = [7, 7], strides = 1, padding = "valid", activation = tf.nn.relu)
-    #print("deconv1 upsample1: ", upsample1)
-    
-    def UnPooling(x):
-        # https://github.com/tensorflow/tensorflow/issues/2169
-        out = tf.concat([x, tf.zeros_like(x)], 3)
-        out = tf.concat([out, tf.zeros_like(out)], 2)
-        
-        sh = x.get_shape().as_list()
-        if None not in sh[1:]:
-            out_size = [-1, sh[1] * 2, sh[2] * 2, sh[3]]
-            return tf.reshape(out, out_size)
-        else:
-            shv = tf.shape(x)
-            ret = tf.reshape(out, tf.stack([-1, shv[1] * 2, shv[2] * 2, sh[3]]))
-            return ret   
-        
+    upsample1 = tf.layers.conv2d_transpose(inputs = fc2, filters = 128, kernel_size = [11, 11], strides = 1, padding = "valid", activation = tf.nn.relu)
+    print("deconv1 upsample1: ", upsample1)
     
     #unpool1
-    unpool1 = UnPooling(upsample1)
-    unpool1 = tf.image.resize_bilinear(unpool1,[62,62])
-    #print("unpooled unpool2: ", unpool1)
+    unpool1 = tf.image.resize_bilinear(upsample1, [46,46])
+    print("unpooled unpool1: ", unpool1)
+    
     
     #deconv2
     upsample2 = tf.layers.conv2d_transpose(inputs = unpool1, filters = 64, kernel_size = [3, 3], strides = 1, padding = "valid", activation = tf.nn.relu)
-    #print("deconv2 upsample2: ", upsample2)
+    print("deconv2 upsample2: ", upsample2)
     
     #unpool2
-    unpool2 = UnPooling(upsample2)
-    unpool2 = tf.image.resize_bilinear(unpool2,[194,194])
-    #print("unpooled unpool2: ", unpool2)    
+    unpool2 = tf.image.resize_bilinear(upsample2, [194,194]) 
+    print("unpooled unpool2: ", unpool2 )
     
-    #deconv21
-    upsample21 = tf.layers.conv2d_transpose(inputs = unpool2, filters = 5, kernel_size = [3, 3], strides = 1, padding = "valid", activation = tf.nn.relu)
-    #print("deconv21 upsample2: ", upsample21)    
+    #deconv3
+    upsample3 = tf.layers.conv2d_transpose(inputs = unpool2, filters = 20, kernel_size = [3, 3], strides = 1, padding = "valid", activation = tf.nn.relu)
+    print("deconv3 upsample3: ", upsample3)  
+    #deconv3
+    upsample4 = tf.layers.conv2d_transpose(inputs = upsample3, filters = 5, kernel_size = [1, 1], strides = 1, padding = "valid", activation = tf.nn.relu)
+    print("deconv4 upsample3: ", upsample4)    
     
-        
     
-    logits = tf.nn.softmax(upsample21)
+    logits = tf.nn.softmax(upsample4)
     print(logits)
-    
     
     return logits
 

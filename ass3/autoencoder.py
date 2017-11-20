@@ -9,6 +9,7 @@ def AutoEncoder(input_tensor, is_training):
     # There are two part:
     # - An autoencoder: output is recon
     # - A classification branch from the hidden representation of the autoencoder: output is logits
+    
     #================(autoencoder)================
     n_inputs = 28 * 28
     n_hidden1 = 500
