@@ -16,31 +16,29 @@ def SemSeg(input_tensor, is_training):
     
         
     #conv1
-    print(input_tensor)
+    
     conv1 = tf.layers.conv2d(inputs = input_tensor, filters = 64, kernel_size = [3,3], padding = "valid", activation = tf.nn.relu)
-    #print("shape of conv1: ", conv1) #192, 192, 2
+    
     #pool1
     pool1 = tf.layers.max_pooling2d(inputs = conv1, pool_size = [3, 3], strides = 3)
-    #print("shape of pool1: ", pool1) #96, 96, 2
+    
     #conv2
     conv2 = tf.layers.conv2d(inputs = pool1, filters = 128, kernel_size = [3, 3], padding = "valid", activation = tf.nn.relu)
-    #print("shape of conv2: ", conv2)
+    
     #pool2
     pool2 = tf.layers.max_pooling2d(inputs = conv2, pool_size = [3, 3], strides = 3)
-    #print("shape of pool2: ", pool2)    
+      
     
-    #print("")
-    #print("fully connected")
+    
     #fc
     fc = tf.layers.conv2d(inputs = pool2, filters = 4096, kernel_size = [7, 7], padding = "valid", activation = tf.nn.relu)
-    #print("fc shape: ", fc)
+    
     fc2 = tf.layers.conv2d(inputs = fc, filters = 4096, kernel_size = [1, 1], padding = "valid", activation = tf.nn.relu)
-    #print("fc2 shape: ", fc2)    
-    #print("")
+    
     
     #deconv1
     upsample1 = tf.layers.conv2d_transpose(inputs = fc2, filters = 128, kernel_size = [7, 7], strides = 1, padding = "valid", activation = tf.nn.relu)
-    #print("deconv1 upsample1: ", upsample1)
+    
     
     def UnPooling(x):
         # https://github.com/tensorflow/tensorflow/issues/2169
@@ -60,26 +58,21 @@ def SemSeg(input_tensor, is_training):
     #unpool1
     unpool1 = UnPooling(upsample1)
     unpool1 = tf.image.resize_bilinear(unpool1,[62,62])
-    #print("unpooled unpool2: ", unpool1)
+    
     
     #deconv2
     upsample2 = tf.layers.conv2d_transpose(inputs = unpool1, filters = 64, kernel_size = [3, 3], strides = 1, padding = "valid", activation = tf.nn.relu)
-    #print("deconv2 upsample2: ", upsample2)
+    
     
     #unpool2
     unpool2 = UnPooling(upsample2)
     unpool2 = tf.image.resize_bilinear(unpool2,[194,194])
-    #print("unpooled unpool2: ", unpool2)    
+        
     
     #deconv21
     upsample21 = tf.layers.conv2d_transpose(inputs = unpool2, filters = 5, kernel_size = [3, 3], strides = 1, padding = "valid", activation = tf.nn.relu)
-    #print("deconv21 upsample2: ", upsample21)    
-    
-        
     
     logits = tf.nn.softmax(upsample21)
-    print(logits)
-    
     
     return logits
 
@@ -120,9 +113,27 @@ def run():
         true_labels = true_labels.flatten()
         accuracy = float((predicted_labels == true_labels).astype(np.int32).sum()) / true_labels.size
         return predicted_labels, accuracy
-
+    
+    #save/load checkpoint 
+    saver = tf.train.Saver(max_to_keep = 1)
     sess = tf.Session()
-    sess.run(tf.global_variables_initializer())
+    try:
+        print("================Trying to restore last checkpoint ...================")
+        saver.restore(sess, tf.train.latest_checkpoint('ckpt'))
+        print("================Checkpoint restored .================")
+        print("================skip training process================")
+        print("================testing================")
+        print('Evaluating on test set')
+        _, test_accuracy = evaluation(test_set._images, test_set._masks)
+        print("Test Pixel Accuracy = {:.3f}".format(test_accuracy))
+        sess.close()    
+        return test_accuracy
+    except:
+        print("================Failed to find last check point================")
+        print("================initial global variables================")
+        sess.run(tf.global_variables_initializer())    
+
+    
     print("Training...")
     for i in range(NUM_ITERS):
         batch_x, batch_y = train_set.get_next_batch()
@@ -130,6 +141,7 @@ def run():
         if (i + 1) % 50 == 0 or i == NUM_ITERS - 1:
             _, test_accuracy = evaluation(test_set._images, test_set._masks)
             print("Iter {}: Test Pixel Accuracy = {:.3f}".format(i, test_accuracy))
+            saver.save(sess, 'ckpt/checkpoint', global_step = i)
 
     print('Evaluating on test set')
     _, test_accuracy = evaluation(test_set._images, test_set._masks)
