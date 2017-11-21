@@ -33,8 +33,8 @@ if __name__ == '__main__':
             last_name='guan',
         )
     ]
-    for algorithm in [svm]:
-    #for algorithm in [svm, exponential, knn]:
+    #for algorithm in [exponential]:
+    for algorithm in [svm, exponential, knn]:
         x_valid, y_valid = mnist.validation._images, mnist.validation.labels
         if algorithm.__name__ == 'knn':
             x_valid, y_valid = x_valid[:1000], y_valid[:1000]

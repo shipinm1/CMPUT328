@@ -1,0 +1,6 @@
+model_checkpoint_path: "netCheckpoint-99"
+all_model_checkpoint_paths: "netCheckpoint-95"
+all_model_checkpoint_paths: "netCheckpoint-96"
+all_model_checkpoint_paths: "netCheckpoint-97"
+all_model_checkpoint_paths: "netCheckpoint-98"
+all_model_checkpoint_paths: "netCheckpoint-99"
